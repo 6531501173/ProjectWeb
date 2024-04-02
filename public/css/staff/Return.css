@@ -1,0 +1,23 @@
+.card {
+    margin-left: 5rem;
+    height: auto;
+    width: 15rem;
+    border-radius: 50px;
+}
+
+.card:last-child {
+    margin-right: 5rem;
+}
+.card .card-body img {
+    max-width: 50%;
+    height:auto;
+}
+.card .card-title{
+    margin-top: 15px;
+}
+#Re{
+    border-radius: 50px;
+    background: #EF7BBA;
+    color: white;
+}
+

@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <script src="/public/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/js/sweetalert2@11.js"></script>
     <link rel="stylesheet" href="/public/css/bg-nav.css">
     <link rel="stylesheet" href="/public/css/staff/Return.css">
 </head>
@@ -39,7 +40,70 @@
         </div>
     </nav>
     <!-- body -->
-    
+    <div class="d-flex flex-wrap justify-content-center mt-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="/public/img/game of thrones.png" class="card-img-top" alt="game of thrones">
+                <div class="card-title">
+                    <h5>Game of Thrones</h5>
+                    <h5>date</h5>
+                    <p>20/03/2024</p>
+                    <h5>Return date</h5>
+                    <p>20/03/2024</p>
+                    <h5>Status</h5>
+                    
+                </div>
+                <a href="#" class="btn " id="Re">Return</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="/public/img/Doraemon.png" class="card-img-top" alt="Doraemon">
+                <div class="card-title">
+                    <h5>Doraemon</h5>
+                    <h5>date</h5>
+                    <p>21/03/2024</p>
+                    <h5>Return date</h5>
+                    <p>27/03/2024</p>
+                    
+                    
+                </div>
+                <a href="#" class="btn " id="Re">Return</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="/public/img/HarryPotter.png" class="card-img-top" alt="Doraemon">
+                <div class="card-title">
+                    <h5>Harry Potter 1</h5>
+                    <h5>date</h5>
+                    <p>22/03/2024</p>
+                    <h5>Return date</h5>
+                    <p>27/03/2024</p>
+                    
+                    
+                </div>
+                <a href="#" class="btn " id="Re">Return</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Logout
+        document.querySelector("#navbtn").onclick = function () {
+            Swal.fire({
+                title: "Are you sure for Logout?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#FF7070",
+                cancelButtonColor: "#D6D6D6",
+                confirmButtonText: "Logout!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.assign("/views/index/Home.html")
+                }
+            });
+        }
+    </script>
 
 </body>
 
