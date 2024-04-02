@@ -23,3 +23,9 @@ h3{
     border-radius: 50px;
 }
 
+#createAsset{
+    background-color: rgb(179, 161, 199);
+    width: 100px;
+    height: 45px;
+    border-radius: 20px;
+}
