@@ -1,0 +1,46 @@
+#container-body {
+    background-color: #C0B2D2;
+    border-radius: 20px;
+    width: 70rem;
+    height: 45rem;
+    margin: auto;
+}
+
+#img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5rem;
+    width: 25rem;
+    height: 25rem;
+    background-color: white;
+    border-style: solid;
+    border-color: #9e90b1;
+    border-width: 10px;
+    border-radius: 20px;
+}
+
+#content {
+    margin: auto;
+    margin-top: 8rem;
+}
+
+@media (max-width: 1980px) {
+    #container-body {
+        width: 60rem;
+        height: 30rem;
+    }
+
+    #img {
+        width: 15rem;
+        height: 22rem;
+    }
+}
+
+.inp{
+    width: 20rem;
+}
+
+.button{
+    width: 8rem;
+}
