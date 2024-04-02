@@ -40,7 +40,36 @@
     </nav>
 
     <!-- body -->
-    
+    <div id="table">
+        <h3 class="text-white mx-5 py-2">History 
+            <button class="btn text-white float-end me-5 mt-3" id="createAsset" onclick="location.href='/views/staff/Create.html'">Create +</button>
+        </h3>
+        <table class="table table-striped">
+            <tr class="colum">
+                <th>No</th>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Lender</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            <tbody id="TB">
+                <tr class="colum">
+                    <td>1</td>
+                    <td></td>
+                    <td>Game of Throne</td>
+                    <td>Johndoe007</td>
+                    <td>Jame johnson</td>
+                    <td class="text-success">avaliable</td>
+                    <td> <button id="edit" type="button" class="btn" onclick="location.href='/views/staff/Edit.html'">Edit</button></td>
+                </tr>
+                
+                
+            </tbody>
+        </table>
+    </div>
+
 
 </body>
 

@@ -1,0 +1,28 @@
+#userinfo {
+    background-color: rgba(192, 178, 210, 1);
+    border-radius: 45px;
+    margin: auto;
+    margin-top: 3rem;
+    max-width: 90rem; 
+    width: 100%; 
+
+    @media only screen and (max-width: 155200px) {
+        max-width: 80%;
+        border-radius: 25px;
+        margin-top: 2rem; 
+    }
+
+}
+
+h3{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#approve{
+    background: rgba(190, 255, 179, 1);
+    border-radius: 50px;
+}
+#disapprove{
+    background: rgba(255, 112, 112, 1);
+    border-radius: 50px;
+}
