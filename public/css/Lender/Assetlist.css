@@ -1,0 +1,19 @@
+#container {
+    margin-left: 20rem;
+    margin-right: 15rem;
+}
+
+@media (max-width: 1920px) { /* Adjust margin for small screens */
+    #container {
+        margin-left: 3.5rem;
+        margin-right: 1rem;
+    }
+}
+
+#borrowbtn {
+    text-decoration: none; /* Removes underline */
+}
+
+.card{
+    background-color: #C0B2D2;
+}

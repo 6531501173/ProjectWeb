@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <script src="/public/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/js/sweetalert2@11.js"></script>
     <link rel="stylesheet" href="/public/css/bg-nav.css">
     <link rel="stylesheet" href="/public/css/Lender/Assetlist.css">
 </head>
@@ -40,7 +41,101 @@
     </nav>
 
     <!-- body -->
-    
+    <div id="container" class="d-flex flex-wrap">
+    </div>
+    <script>
+        // Logout
+        document.querySelector("#navbtn").onclick = function () {
+            Swal.fire({
+                title: "Are you sure for Logout?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#FF7070",
+                cancelButtonColor: "#D6D6D6",
+                confirmButtonText: "Logout!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.assign("/views/index/Home.html")
+                }
+            });
+        }
+
+
+        // Get today's date
+        const today = new Date();
+
+        // Get tomorrow's date
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        fetch('/public/Book1.json')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                appendData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            })
+        function appendData(data) {
+            book = data.book;
+
+            let output = "";
+            book.forEach(book => {
+                output += `<div class="card my-3 mx-3 shadow item" style="width: 15rem; cursor: pointer" id="${book.id}">`
+                output += `<img src="/public/img/bookimg/${book.image}" alt="${book.name}">`
+                output += `<div class="card-body">`
+                output += `<h5 class="card-title text-white">${book.name}</h5>`
+                output += `</div>`
+                output += `</div>`
+            });
+            document.querySelector("#container").innerHTML = output;
+            const item = document.querySelectorAll(".item");
+            item.forEach(t => {
+                t.onclick = function () {
+                    book.forEach(findBook => {
+                        if (t.id == findBook.id) {
+                            if (findBook.status == "available") {
+                                Swal.fire({
+                                    title: `<strong>${findBook.name}</strong>`,
+                                    html: statusCheck(findBook),
+                                    imageUrl: `/public/img/bookimg/${findBook.image}`,
+                                    imageWidth: 300,
+                                    imageHeight: 400,
+                                    imageAlt: `${findBook.image}`,
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: `<strong>${findBook.name}</strong>`,
+                                    html: statusCheck(findBook),
+                                    imageUrl: `/public/img/bookimg/${findBook.image}`,
+                                    imageWidth: 300,
+                                    imageHeight: 400,
+                                    imageAlt: `${findBook.image}`,
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        function statusCheck(object) {
+            if (object.status == "available") {
+                return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-success"><strong>${object.status}</strong></span>`
+            }
+            if (object.status == "pending") {
+                return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-warning"><strong>${object.status}</strong></span>`
+            }
+            if (object.status == "disable") {
+                return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-danger"><strong>${object.status}</strong></span>`
+            }
+            if (object.status == "borrowed") {
+                return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-danger"><strong>${object.status}</strong></span>`
+            }
+        }
+
+    </script>
 
 </body>
 
