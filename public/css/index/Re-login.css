@@ -1,0 +1,12 @@
+#body {
+    background: rgba(192, 178, 210, 1);
+    border-radius: 50px;
+    margin: 0% 30%;
+}
+#ibody{
+    width: 55%;
+}
+#signin{
+    background: rgba(239, 123, 186, 1);
+    border-radius: 50px;
+}

@@ -1,0 +1,15 @@
+body {
+    background: rgba(234, 222, 242, 1);
+}
+li:not(:last-child) a {
+    border-right: 1px solid rgba(153, 121, 194, 1);
+}
+
+nav {
+    background: rgba(254, 229, 235, 1);
+}
+
+#navbtn{
+    background: rgba(255, 112, 112, 1);
+    border-radius: 50px;
+}
