@@ -39,7 +39,52 @@
         </div>
     </nav>
     <!-- body -->
-    
+    <div>
+        <h1 class=" text-center" id="topic">Today's Status</h1>
+        <div class="d-flex flex-wrap text-center justify-content-center">
+            <div class="card mx-4" id="dashboard">
+                <div class="card-body text-white inner" id="innerbg1">
+                    <h1>4</h1>
+                    <h1>Available</h1>
+                </div>
+            </div>
+            <div class="card mx-4" id="dashboard">
+                <div class="card-body text-white inner" id="innerbg2">
+                    <h1>2</h1>
+                    <h1>Disable</h1>
+                </div>
+            </div>
+            <div class="card mx-4" id="dashboard">
+                <div class="card-body text-white inner" id="innerbg3">
+                    <h1>2</h1>
+                    <h1>Borrowed</h1>
+                </div>
+            </div>
+            <div class="card mx-4" id="dashboard">
+                <div class="card-body text-white inner" id="innerbg4">
+                    <h1>2</h1>
+                    <h1>Pending</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Logout
+        document.querySelector("#navbtn").onclick = function () {
+            Swal.fire({
+                title: "Are you sure for Logout?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Logout!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.assign("/views/index/Home.html")
+                }
+            });
+        }
+    </script>
 
 </body>
 
