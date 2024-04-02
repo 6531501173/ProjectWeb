@@ -35,6 +35,13 @@
         width: 15rem;
         height: 22rem;
     }
+
+    #content {
+        margin: auto;
+        margin-top: 5rem;
+    }
+
+   
 }
 
 .inp{
