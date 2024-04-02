@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <script src="/public/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/public/css/bg-nav.css">
-    <link rel="stylesheet" href="/public/css/staff/Create.css">
+    <link rel="stylesheet" href="/public/css/staff/Edit.css">
 </head>
 
 <body>
@@ -40,7 +40,39 @@
     </nav>
 
     <!-- body -->
-    
+    <h1 class="text-center my-5">Edit Asset</h1>
+    <div id="container-body" class="d-flex">
+        <div id="img">
+            <input type="file" id="inpfile">
+        </div>
+        <div id="content">
+            <div class="inp">
+                <h4>Title</h4>
+                <input type="text" class="form-control" value="Harry potter">
+            </div>
+            <div class="inp">
+                <h4>Author</h4>
+                <input type="text" class="form-control" value="JK">
+            </div>
+            <div class="inp">
+                <h4>Lender</h4>
+                <input type="text" class="form-control" value="John Doe">
+            </div>
+            <div class="inp">
+                <h4>Status</h4>
+                <select name="status" id="item-status" class="form-control">
+                    <option value="Available" class="text-success">Available</option>
+                    <option value="Available" class="text-danger">Disable</option>
+                    <option value="Available" class="text-warning">Pending</option>
+                    <option value="Available" class="text-danger">Borrowed</option>
+                </select>
+            </div>
+            <div class="m-4">
+                <button class="btn btn-warning button">Save</button>
+                <button class="btn btn-secondary button">Cancle</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
