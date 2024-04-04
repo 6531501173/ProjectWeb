@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <script src="/public/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/js/sweetalert2@11.js"></script>
     <link rel="stylesheet" href="/public/css/bg-nav.css">
     <link rel="stylesheet" href="/public/css/index/Re-login.css">
 </head>
@@ -20,7 +21,7 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item ">
-                    <a class="nav-link text-black" href="/views/index/register.html">Register</a>
+                    <button class="nav-link text-black" id="registerbtn">Register</button>
                 </li>
             </ul>
         </div>
@@ -30,23 +31,65 @@
         <div class=" mt-5 col-md-4 col-sm-12 d-flex justify-content-center shadow" id="body">
             <div class=" py-4 text-white" id="ibody">
                 <h2 class="py-2">Login</h2>
-                <form>
+                <form id="loginForm">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username">
+                        <input type="text" class="form-control" id="username" name="username">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password">
+                        <input type="password" class="form-control" id="password" name="password">
                     </div>
                     <div class="d-grid py-2">
-                        <button class="btn" id="signin">
+                        <button type="submit" class="btn" id="signin">
                             Sign in
                         </button>
                     </div>
+                </form>
             </div>
         </div>
     </div>
+    <script>
+        document.querySelector('#loginForm').onsubmit = async function (event) {
+            event.preventDefault();
+            const username = document.querySelector('#username').value;
+            const password = document.querySelector('#password').value;
+
+            // Send AJAX request to server
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    // Check if user is redirected to staff dashboard
+                    if (data.redirectTo === '/staff/dashboard') {
+                        window.location.href = data.redirectTo;
+                    }
+                    // Handle other scenarios if needed
+                } else {
+                    // Handle login error
+                    alert(data); // Display error message
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle other errors
+            }
+        };
+
+        // ----NAV-----
+        document.querySelector("#registerbtn").onclick = function () {
+            window.location.href = "/register";
+        };
+    </script>
 </body>
 
 </html>

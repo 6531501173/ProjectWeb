@@ -19,15 +19,23 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item ">
-                    <a class="nav-link text-black" href="/views/index/login.html">Login</a>
+                    <button class="nav-link text-black" id="loginbtn">Login</button>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link text-black" href="/views/index/register.html">Register</a>
+                    <button class="nav-link text-black" id="registerbtn">Register</button>
                 </li>
             </ul>
         </div>
     </nav>
-
+    <script>
+        // ----NAV-----
+        document.querySelector("#loginbtn").onclick = function () {
+            window.location.href = "/login";
+        };
+        document.querySelector("#registerbtn").onclick = function () {
+            window.location.href = "/register";
+        };
+    </script>
 </body>
 
 </html>

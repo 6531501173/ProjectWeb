@@ -4,13 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registations</title>
+    <title>Registration</title>
 
     <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <script src="/public/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/public/css/bg-nav.css">
     <link rel="stylesheet" href="/public/css/index/Re-login.css">
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> <!-- Include SweetAlert2 library -->
+    <style>
+        /* Add background color style for the button */
+        .btn {
+            background: rgba(239, 123, 186, 1);
+            border-radius: 50px;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,7 +28,7 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item ">
-                    <a class="nav-link text-black" href="/views/index/login.html">Login</a>
+                    <button class="nav-link text-black" id="loginbtn">Login</button>
                 </li>
             </ul>
         </div>
@@ -31,35 +38,108 @@
         <div class=" mt-5 col-md-4 col-sm-12 d-flex justify-content-center shadow" id="body">
             <div class=" py-4 text-white" id="ibody">
                 <h2 class="py-2">Register</h2>
-                <form>
+                <form id="registerForm">
                     <div class="mb-3">
                         <label class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name">
+                        <input type="text" class="form-control inp" id="name" name="name">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username">
+                        <input type="text" class="form-control inp" id="username" name="username">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email">
+                        <input type="email" class="form-control inp" id="email" name="email">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password">
+                        <input type="password" class="form-control inp" id="password" name="password">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Re-Password</label>
-                        <input type="password" class="form-control" id="repassword">
+                        <input type="password" class="form-control inp" id="repassword">
                     </div>
                     <div class="d-grid py-2">
-                        <button class="btn" id="signin">
+                        <button type="submit" class="btn" id="signup">
                             Sign up
                         </button>
                     </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <script>
+        document.querySelector("#registerForm").onsubmit = async function (event) {
+            event.preventDefault();
+
+            const name = document.querySelector('#name').value;
+            const username = document.querySelector('#username').value;
+            const email = document.querySelector('#email').value;
+            const password = document.querySelector('#password').value;
+            const repassword = document.querySelector('#repassword').value;
+
+            if (name === '' || username === '' || email === '' || password === '' || repassword === '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Registration failed',
+                    text: "Please fill all fields"
+                });
+                return;
+            }
+
+            // Check if password and re-password match
+            if (password !== repassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Registration failed',
+                    text: "Passwords do not match."
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        username: username,
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.text();
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Registration successful',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = "/login";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Registration failed',
+                        text: data
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle other errors
+            }
+        };
+
+        // ----NAV-----
+        document.querySelector("#loginbtn").onclick = function () {
+            window.location.href = "/login";
+        };
+    </script>
 </body>
 
 </html>
