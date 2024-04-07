@@ -11,6 +11,7 @@
     <script src="/public/js/sweetalert2@11.js"></script>
     <link rel="stylesheet" href="/public/css/bg-nav.css">
     <link rel="stylesheet" href="/public/css/borrower/Requestborrow.css">
+    <link rel="stylesheet" href="/public/js/requestborrow.js">
 </head>
 
 <body>
@@ -37,7 +38,34 @@
         </div>
     </nav>
     <!-- body -->
-    
+    <h1 class="text-center my-5">Request Borrow</h1>
+    <div id="container-body" class="d-flex">
+        <div id="img" style="max-width: 50%; max-height: 100%;">
+            <img src="/public/img/bookimg/HarryPotter.png" alt="HarryPotter" style="width: 100%; height: 100%; border-radius: 10px;">
+        </div>
+        <div id="content">
+            <div class="inp">
+                <h4>Title:</h4>
+                <input type="text" class="form-control" value="Harry potter">
+            </div>
+            <div class="inp">
+                <h4>Author:</h4>
+                <input type="text" class="form-control" value="JK">
+            </div>
+            <div class="inp">
+                <h4>Lender:</h4>
+                <input type="text" class="form-control" value="John Doe">
+            </div>
+            <div class="inp">
+                <h4>Date:</h4>
+                <input type="date" id="Date" name="Date"max="2024-04-10" min="2024-04-09">
+            </div>
+            <div class="m-4">
+                <button class="btn btn-warning button">Save</button>
+                <button class="btn btn-secondary button">Cancle</button>
+            </div>
+        </div>
+    </div>
     <script>
         // Logout
         document.querySelector("#navbtn").onclick = function () {
@@ -53,7 +81,9 @@
                     window.location.assign("/views/index/Home.html")
                 }
             });
+            
         }
+        
     </script>
 </body>
 
