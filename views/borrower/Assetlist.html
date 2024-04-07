@@ -52,7 +52,7 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/login";
                 }
             });
         }
@@ -134,6 +134,8 @@
                 return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-danger"><strong>${object.status}</strong></span>`
             }
         }
+
+
 
     </script>
 

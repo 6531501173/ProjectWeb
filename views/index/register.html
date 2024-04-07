@@ -79,7 +79,7 @@
             const password = document.querySelector('#password').value;
             const repassword = document.querySelector('#repassword').value;
 
-            if (name === '' || username === '' || email === '' || password === '' || repassword === '') {
+            if (name === '' || username === '' || email === '' || password === '' || repassword === '') { //กันไม่ให้ใส่ช่องว่าง
                 Swal.fire({
                     icon: 'error',
                     title: 'Registration failed',
@@ -135,7 +135,7 @@
             }
         };
 
-        // ----NAV-----
+        // ----NAV----- แทบเมนูด้านบน
         document.querySelector("#loginbtn").onclick = function () {
             window.location.href = "/login";
         };

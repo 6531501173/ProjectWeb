@@ -70,10 +70,7 @@
 
                 const data = await response.json();
                 if (response.ok) {
-                    // Check if user is redirected to staff dashboard
-                    if (data.redirectTo === '/staff/dashboard') {
-                        window.location.href = data.redirectTo;
-                    }
+                    window.location.href = data.redirectTo;
                     // Handle other scenarios if needed
                 } else {
                     // Handle login error

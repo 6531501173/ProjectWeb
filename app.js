@@ -33,38 +33,46 @@ app.get("/password/:pass", function (req, res) {
 app.get("/login", function (req, res) {
     res.sendFile(path.join(__dirname, "views/index/login.html"));
 });
-app.post("/login", function (req, res) {
-    const username = req.body.username;
-    const raw = req.body.password;
-
+app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+  
     const sql = "SELECT user_id, password, role FROM user_info WHERE username = ?";
-    con.query(sql, [username], function (err, results) {
+    con.query(sql, [username], (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Database server error");
+      }
+      if (results.length !== 1) {
+        return res.status(401).send("Wrong username");
+      }
+      bcrypt.compare(password, results[0].password, (err, same) => {
         if (err) {
-            console.error(err);
-            return res.status(500).send("Database server error");
+          return res.status(500).send("Authentication server error");
         }
-        if (results.length !== 1) {
-            return res.status(401).send("Wrong username");
+        if (same) {
+          // Redirect based on user's role
+          let redirectTo;
+          switch (results[0].role) {
+            case "admin":
+              redirectTo = "/staff/dashboard";
+              break;
+            case "lender":
+              redirectTo = "/lender/assetlist";
+              break;
+            case "borrower":
+              redirectTo = "/borrower/assetlist";
+              break;
+            default:
+              redirectTo = "/";
+              break;
+          }
+          return res.status(200).json({ redirectTo });
+        } else {
+          return res.status(401).send("Wrong password");
         }
-        bcrypt.compare(raw, results[0].password, function (err, same) {
-            if (err) {
-                return res.status(500).send("Authentication server error");
-            }
-            if (same) {
-                if (results[0].role === "admin") {
-                    // If the user is an admin, send a JSON response with redirect URL
-                    return res.status(200).json({ redirectTo: "/staff/dashboard" });
-                } else {
-                    // Handle other roles or scenarios if needed
-                }
-            } else {
-                return res.status(401).send("Wrong password");
-            }
-        });
+      });
     });
-});
-
-
+  });
 
 
 
@@ -84,8 +92,8 @@ app.post("/register", function (req, res) {
         if (err) {
             return res.status(500).send("Hashing error");
         }
-        var sql = `INSERT INTO user (name, username, email, password) VALUES (?, ?, ?, ?)`;
-        con.query(sql, [name, username, email, hash], function (err, result) {
+        var sql = `INSERT INTO user_info (name, username, email, password) VALUES (?, ?, ?, ?)`; // mysql ใส่ตารางทั้งหมดของดาต้า user
+        con.query(sql, [name, username, email, hash], function (err, result) {// ส่งคำสั่งไปใน mysql ดาต้าของเรา
             if (err) {
                 console.error(err);
                 return res.status(500).send("Database server error");
@@ -117,9 +125,15 @@ app.get("/staff/returnasset", function (req, res) {
     res.sendFile(path.join(__dirname, "views/staff/Returnasset.html"));
 });
 
+// ------Lender----------
+app.get("/lender/assetlist", function (req, res) {
+    res.sendFile(path.join(__dirname, "views/Lender/Assetlist.html"));
+});
 
-
-
+// ------Borrower--------
+app.get("/borrower/assetlist", function (req, res) {
+    res.sendFile(path.join(__dirname, "views/borrower/Assetlist.html"));
+});
 // ------Root-----------
 app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname, "views/index/Home.html"));
