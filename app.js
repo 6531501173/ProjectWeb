@@ -9,7 +9,7 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "bookshop"
+    database: "library"
 });
 
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -37,7 +37,7 @@ app.post("/login", function (req, res) {
     const username = req.body.username;
     const raw = req.body.password;
 
-    const sql = "SELECT id, password, role FROM user WHERE username = ?";
+    const sql = "SELECT user_id, password, role FROM user_info WHERE username = ?";
     con.query(sql, [username], function (err, results) {
         if (err) {
             console.error(err);
@@ -51,7 +51,7 @@ app.post("/login", function (req, res) {
                 return res.status(500).send("Authentication server error");
             }
             if (same) {
-                if (results[0].role === 1) {
+                if (results[0].role === "admin") {
                     // If the user is an admin, send a JSON response with redirect URL
                     return res.status(200).json({ redirectTo: "/staff/dashboard" });
                 } else {
@@ -88,7 +88,7 @@ app.post("/register", function (req, res) {
         con.query(sql, [name, username, email, hash], function (err, result) {
             if (err) {
                 console.error(err);
-                return res.status(500).send("Database error");
+                return res.status(500).send("Database server error");
             }
             // If registration is successful, send a success response
             return res.status(200).send("Registration successful");
