@@ -41,28 +41,27 @@
     <h1 class="text-center my-5">Request Borrow</h1>
     <div id="container-body" class="d-flex">
         <div id="img" style="max-width: 50%; max-height: 100%;">
-            <img src="/public/img/bookimg/HarryPotter.png" alt="HarryPotter" style="width: 100%; height: 100%; border-radius: 10px;">
+            <img src="/public/img/bookimg/HarryPotter.png" alt="HarryPotter"
+                style="width: 100%; height: 100%; border-radius: 10px;">
         </div>
         <div id="content">
             <div class="inp">
                 <h4>Title:</h4>
                 <input type="text" class="form-control" value="Harry potter">
             </div>
+            <br>
             <div class="inp">
                 <h4>Author:</h4>
                 <input type="text" class="form-control" value="JK">
             </div>
-            <div class="inp">
-                <h4>Lender:</h4>
-                <input type="text" class="form-control" value="John Doe">
-            </div>
+            <br>
             <div class="inp">
                 <h4>Date:</h4>
-                <input type="date" id="Date" name="Date"max="2024-04-10" min="2024-04-09">
+                <input type="date" id="Date" name="Date" max="2024-04-10" min="2024-04-09">
             </div>
             <div class="m-4">
                 <button class="btn btn-warning button">Save</button>
-                <button class="btn btn-secondary button">Cancle</button>
+                <button class="btn btn-secondary button" id="cancelBtn">Cancel</button>
             </div>
         </div>
     </div>
@@ -81,9 +80,11 @@
                     window.location.assign("/views/index/Home.html")
                 }
             });
-            
+            document.getElementById("cancelBtn").addEventListener("click", function () {
+            window.location.href = "/views/index/Home.html"; 
+});
         }
-        
+
     </script>
 </body>
 
