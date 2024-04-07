@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <script src="/public/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/js/sweetalert2@11.js"></script>
     <link rel="stylesheet" href="/public/css/bg-nav.css">
     <link rel="stylesheet" href="/public/css/staff/Create.css">
 </head>
@@ -41,6 +42,22 @@
 
     <!-- body -->
    
+
+
+    <script> document.querySelector("#navbtn").onclick = function () {
+        Swal.fire({
+            title: "Are you sure for Logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#FF7070",
+            cancelButtonColor: "#D6D6D6",
+            confirmButtonText: "Logout!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.assign("/views/index/Home.html")
+            }
+        });
+    }</script>
 
 
 </body>
