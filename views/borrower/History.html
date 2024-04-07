@@ -89,7 +89,7 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "/login";
+                    window.location.assign("/views/index/Home.html")
                 }
             });
         }
