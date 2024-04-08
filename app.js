@@ -135,7 +135,7 @@ app.get("/borrower/booklist", function (req, res) {
     res.sendFile(path.join(__dirname, "views/borrower/Assetlist.html"));
 });
 // ------Root-----------
-app.get("/", function (req, res) {
+app.get("/Home", function (req, res) {
     res.sendFile(path.join(__dirname, "views/index/Home.html"));
 });
 
