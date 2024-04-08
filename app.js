@@ -50,17 +50,17 @@ app.post("/login", (req, res) => {
           return res.status(500).send("Authentication server error");
         }
         if (same) {
-          // Redirect based on user's role
+          // Redirect based on user's       role ไปตามหน้าของแต่ละrole
           let redirectTo;
           switch (results[0].role) {
             case "admin":
               redirectTo = "/staff/dashboard";
               break;
             case "lender":
-              redirectTo = "/lender/assetlist";
+              redirectTo = "/lender/booklist";
               break;
             case "borrower":
-              redirectTo = "/borrower/assetlist";
+              redirectTo = "/borrower/booklist";
               break;
             default:
               redirectTo = "/";
@@ -109,7 +109,7 @@ app.post("/register", function (req, res) {
 app.get("/staff/dashboard", function (req, res) {
     res.sendFile(path.join(__dirname, "views/staff/Dashboard.html"));
 });
-app.get("/staff/assetlist", function (req, res) {
+app.get("/staff/booklist", function (req, res) {
     res.sendFile(path.join(__dirname, "views/staff/Assetlist.html"));
 });
 app.get("/staff/create", function (req, res) {
@@ -126,12 +126,12 @@ app.get("/staff/returnasset", function (req, res) {
 });
 
 // ------Lender----------
-app.get("/lender/assetlist", function (req, res) {
+app.get("/lender/booklist", function (req, res) {
     res.sendFile(path.join(__dirname, "views/Lender/Assetlist.html"));
 });
 
 // ------Borrower--------
-app.get("/borrower/assetlist", function (req, res) {
+app.get("/borrower/booklist", function (req, res) {
     res.sendFile(path.join(__dirname, "views/borrower/Assetlist.html"));
 });
 // ------Root-----------
