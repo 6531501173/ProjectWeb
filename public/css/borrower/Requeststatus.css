@@ -20,3 +20,16 @@
     background: #FF7070;
     color: white;
 }
+
+.cancel-btn {
+    background-color: #FF7070; /* Your desired background color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    padding: 8px 16px; /* Adjust padding as needed */
+    border-radius: 20px; /* Add border-radius for rounded corners */
+}
+
+.big-bold-text {
+    font-size: 24px; /* Adjust the font size as needed */
+    font-weight: bold; /* Make the text bold */
+}

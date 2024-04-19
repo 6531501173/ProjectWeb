@@ -22,16 +22,13 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black disabled" href="/views/Lender/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black disabled" href="#">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/Lender/Dashboard.html">Dashboard</a>
+                    <a class="nav-link text-black" href="/views/borrower/Requeststatus.html">Request Status</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/Lender/History.html">History</a>
-                </li>
-                <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/Lender/Requeststatus.html">Request Status</a>
+                    <a class="nav-link text-black" href="/views/borrower/History.html">History</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -39,13 +36,13 @@
             </ul>
         </div>
     </nav>
-
+    
     <!-- body -->
     <div id="container" class="d-flex flex-wrap">
     </div>
     <script>
-       // Logout
-       document.querySelector("#navbtn").onclick = function () {
+        // Logout
+        document.querySelector("#navbtn").onclick = function () {
             Swal.fire({
                 title: "Are you sure for Logout?",
                 icon: "warning",
@@ -55,20 +52,13 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "/Home";
+                    window.location.href = "/logout";
                 }
             });
         }
 
-
-        // Get today's date
-        const today = new Date();
-
-        // Get tomorrow's date
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        fetch('/public/Book1.json')
+        // Fetch data from backend
+        fetch('/getbooklist')
             .then(function (response) {
                 return response.json();
             })
@@ -78,48 +68,47 @@
             .catch(function (error) {
                 console.log("error:" + error);
             })
+        // Function to append data to HTML
         function appendData(data) {
-            book = data.book;
+    let output = "";
+    data.forEach(book => {
+        console.log(book);
+        output += `<div class="card my-3 mx-3 shadow item" style="width: 15rem; cursor: pointer" id="${book.book_id}">`;
+        output += `<div class="card-body">`;
+        output += `<img src="/public/img/bookimg/${book.image}" alt="${book.title}" class="card-img-top">`;
+        output += `<h5 class="card-title text-white">${book.title}</h5>`;
+        output += `</div>`;
+        output += `</div>`;
+    });
 
-            let output = "";
-            book.forEach(book => {
-                output += `<div class="card my-3 mx-3 shadow item" style="width: 15rem; cursor: pointer" id="${book.id}">`
-                output += `<img src="/public/img/bookimg/${book.image}" alt="${book.name}">`
-                output += `<div class="card-body">`
-                output += `<h5 class="card-title text-white">${book.name}</h5>`
-                output += `</div>`
-                output += `</div>`
-            });
-            document.querySelector("#container").innerHTML = output;
-            const item = document.querySelectorAll(".item");
-            item.forEach(t => {
-                t.onclick = function () {
-                    book.forEach(findBook => {
-                        if (t.id == findBook.id) {
-                            if (findBook.status == "available") {
-                                Swal.fire({
-                                    title: `<strong>${findBook.name}</strong>`,
-                                    html: statusCheck(findBook),
-                                    imageUrl: `/public/img/bookimg/${findBook.image}`,
-                                    imageWidth: 300,
-                                    imageHeight: 400,
-                                    imageAlt: `${findBook.image}`,
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: `<strong>${findBook.name}</strong>`,
-                                    html: statusCheck(findBook),
-                                    imageUrl: `/public/img/bookimg/${findBook.image}`,
-                                    imageWidth: 300,
-                                    imageHeight: 400,
-                                    imageAlt: `${findBook.image}`,
-                                });
-                            }
-                        }
+    document.querySelector("#container").innerHTML = output;
+    const item = document.querySelectorAll(".item");
+    item.forEach(t => {
+        t.onclick = function () {
+            data.forEach(findBook => {
+                if (t.id == findBook.book_id) {
+                    let borrowButtonText = "Borrow";
+                    let borrowButtonColor = "#919191";
+                    if (findBook.status == "available") {
+                        borrowButtonText = `<a class="text-white" href="/views/borrower/Requestborrow.html" id="borrowbtn">Borrow</a>`;
+                    }
+                    Swal.fire({
+                        title: `<strong>${findBook.title}</strong>`,
+                        html: statusCheck(findBook),
+                        imageUrl: `data:image/jpeg;base64,${findBook.image}`,
+                        imageWidth: 300,
+                        imageHeight: 400,
+                        imageAlt: findBook.title,
+                        confirmButtonText: borrowButtonText,
+                        confirmButtonColor: borrowButtonColor
                     });
                 }
             });
         }
+    });
+}
+
+        // Function to check status
         function statusCheck(object) {
             if (object.status == "available") {
                 return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-success"><strong>${object.status}</strong></span>`
@@ -135,8 +124,8 @@
             }
         }
 
-    </script>
 
+    </script>
 </body>
 
 </html>

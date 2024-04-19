@@ -40,46 +40,122 @@
     <h1 class="text-center my-5">Request Borrow</h1>
     <div id="container-body" class="d-flex">
         <div id="img" style="max-width: 50%; max-height: 100%;">
-            <img src="/public/img/bookimg/HarryPotter.png" alt="HarryPotter"
+            <img src="/public/img/bookimg/HarryPotter.png" id="pic" alt="HarryPotter"
                 style="width: 100%; height: 100%; border-radius: 10px;">
         </div>
         <div id="content">
             <div class="inp">
                 <h4>Title:</h4>
-                <input type="text" class="form-control" value="Harry potter">
+                <input type="text" class="form-control" id="title" value="Harry potter">
             </div>
             <br>
             <div class="inp">
                 <h4>Author:</h4>
-                <input type="text" class="form-control" value="JK">
+                <input type="text" class="form-control" id="author" value="JK">
             </div>
             <br>
             <div class="inp">
-                <h4>Date:</h4>
-                <input type="date" id="Date" name="Date" max="2024-04-09" min="2024-04-09">
+                <h4>Borrow Date:</h4>
+                <input type="text" class="my-3 form-control" id="borrowDate" readonly>
+                <input type="text" class="form-control" id="returnDate" readonly>
             </div>
+            <br>
             <div class="m-4">
-                <button class="btn btn-warning button ">Save</button>
+                <button class="btn btn-warning button">Save</button>
                 <button class="btn btn-secondary button" id="cancelBtn">Cancel</button>
             </div>
         </div>
     </div>
     <script>
-         // Save Button
-    document.querySelector(".btn-warning").onclick = function () {
-        Swal.fire({
-            title: "Are you sure to save?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, save it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.assign("/views/borrower/Requeststatus.html"); 
-            }
-        });
-    }
+        const urlParams = new URLSearchParams(window.location.search);
+        const url = window.location.href;
+        const parts = url.split('/');
+        const lastPart = parts[parts.length - 1];
+        const bookid = lastPart.split('=')[1];
+        // Set borrow date as today and tomorrow
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const borrowDateInput = document.getElementById("borrowDate");
+        const returnDateInput = document.getElementById("returnDate");
+        const formattedToday = formatDate(today);
+        const formattedTomorrow = formatDate(tomorrow);
+        borrowDateInput.value = `${formattedToday}`;
+        returnDateInput.value = `${formattedTomorrow}`;
+
+        function formatDate(date) {
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Fetch data from backend
+        fetch(`/findbook?bookid=${bookid}`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            });
+
+        function takeData(data) {
+            document.querySelector("#title").value = data.title;
+            document.querySelector("#author").value = data.author;
+            document.querySelector("#pic").src = `/public/img/bookimg/${data.image}`;
+        }
+
+        // Save Button
+        document.querySelector(".btn-warning").onclick = async function () {
+            Swal.fire({
+                title: "Are you sure to save?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, save it!"
+            }).then(async function (result) {
+                if (result.isConfirmed) {
+                    let borrowerDate = borrowDateInput.value;
+                    let returnDate = returnDateInput.value;
+                    try {
+                        const response = await fetch("/requestStatus", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                bookid: bookid,
+                                borrowerDate: borrowerDate,
+                                returnDate: returnDate
+                            })
+                        });
+                        if (response.ok) {
+                            // Redirect to /requestStatus page
+                            window.location.href = '/requestStatus';
+                        } else {
+                            // Display error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Something went wrong.'
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Handle other errors
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while processing your request.'
+                        });
+                    }
+                }
+            });
+        }
         // Logout
         document.querySelector("#navbtn").onclick = function () {
             Swal.fire({
@@ -91,17 +167,16 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/logout";
                 }
             });
         }
-    
+
         // Cancel Button
         document.querySelector("#cancelBtn").onclick = function () {
-            window.location.assign("/views/borrower/Assetlist.html"); 
+            window.location.href = "/assetlist";
         }
     </script>
-    
 </body>
 
 </html>

@@ -12,7 +12,7 @@
   "name": "Last Letter",
   "image": "Last Letter.jpg",
   "author": "Shunji Iwai",
-  "status": "pending"
+  "status": "available"
  },
  {
   "id": 3,
@@ -26,7 +26,7 @@
   "name": "The Garden of Words",
   "image": "The Garden of Words.jpg",
   "author": "Makoto Shinkai",
-  "status": "pending"
+  "status": "available"
  },
  {
   "id": 5,
@@ -47,28 +47,28 @@
   "name": "Universe: The Definitive Visual Guide",
   "image": "Universe The Definitive Visual Guide.jpg",
   "author": "DK",
-  "status": "disable"
+  "status": "available"
  },
  {
   "id": 8,
   "name": "Your love could have been worse",
   "image": "Your love could have been worse.jpg",
   "author": "Kavin Cherdchanyapong",
-  "status": "pending"
+  "status": "available"
  },
  {
   "id": 9,
   "name": "Apollo 11: The Inside Story",
   "image": "Apollo 11 The Inside Story.jpg",
   "author": "WHITEHOUSE, DAVID",
-  "status": "disable"
+  "status": "available"
  },
  {
   "id": 10,
   "name": "Love & Luck",
   "image": "Love & Luck.jpg",
   "author": "WELCH, JENNA EVANS",
-  "status": "disable"
+  "status": "available"
  },
  {
   "id": 11,
@@ -110,14 +110,14 @@
   "name": "NEW SCIENTIST: THE ORIGIN OF (ALMOST) EVERYTHING",
   "image": "NEW SCIENTIST THE ORIGIN OF (ALMOST) EVERYTHING.jpg",
   "author": "NEW SCIENTIST",
-  "status": "borrowed"
+  "status": "available"
  },
  {
   "id": 17,
   "name": "LOKI: WHERE MISCHIEF LIES",
   "image": "LOKI WHERE MISCHIEF LIES.jpg",
   "author": "LEE, MACKENZI",
-  "status": "borrowed"
+  "status": "available"
  },
  {
   "id": 18,
@@ -138,7 +138,7 @@
   "name": "SPACEFLIGHT: THE COMPLETE STORY FROM SPUTNIK TO CURIOSITY",
   "image": "SPACEFLIGHT THE COMPLETE STORY FROM SPUTNIK TO CURIOSITY.jpg",
   "author": "SPARROW, GILES",
-  "status": "borrowed"
+  "status": "available"
  }
 ],
 "User":[
