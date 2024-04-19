@@ -20,9 +20,9 @@
             <ul class="navbar-nav navbar-brand px-2">
                 <a class="navbar-brand" href="#">Return Asset</a>
             </ul>
-            <ul class="nav  justify-content-end">
+            <ul class="nav justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/Lender/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black" href="/assetlist">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
                     <a class="nav-link text-black" href="/views/Lender/Dashboard.html">Dashboard</a>
@@ -31,7 +31,8 @@
                     <a class="nav-link text-black" href="/views/Lender/History.html">History</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black disabled" href="/views/Lender/Requeststatus.html">Request Status</a>
+                    <a class="nav-link text-black disabled" href="/requestStatus">Request
+                        Status</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -41,17 +42,20 @@
     </nav>
     <!-- body -->
 
-    <div id="userinfo">
+    <div id="userinfo" class="mt-3">
         <h3 class="text-white mx-5 py-2">User info</h3>
         <table class="table table-striped">
-            <tr class="colum">
-                <td>Username: </td>
+            <tr>
+                <td>Username:</td>
+                <td id="username"></td>
             </tr>
-            <tr class="colum">
-                <td>Name: </td>
+            <tr>
+                <td>Name:</td>
+                <td id="name"></td>
             </tr>
-            <tr class="colum">
-                <td>Email: </td>
+            <tr>
+                <td>Email:</td>
+                <td id="email"></td>
             </tr>
         </table>
     </div>
@@ -59,28 +63,19 @@
     <div id="userinfo">
         <h3 class="text-white mx-5 py-2">History</h3>
         <table class="table table-striped">
-            <tr class="colum">
-                <th>No</th>
-                <th>Title</th>
-                <th>Borrower</th>
-                <th>Borrow Date</th>
-                <th>Return Date</th>
-                <th>actions</th>
-            </tr>
-            <tbody>
+            <thead>
                 <tr class="colum">
-                    <td>1</td>
-                    <td>Game of Throne</td>
-                    <td>Jane smith</td>
-                    <td>20/03/2567</td>
-                    <td>21/03/2567</td>
-                    <td>
-                        <button id="approve" type="button" class="btn">Approve</button>
-                        <button id="disapprove" type="button" class="btn">Disapprove</button>
-                    </td>
+                    <th>No</th>
+                    <th>Title</th>
+                    <th>Borrower</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                    <th>Actions</th>
                 </tr>
-            </tbody>
+            </thead>
+            <tbody id="container">
 
+            </tbody>
         </table>
     </div>
 
@@ -96,9 +91,102 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/logout";
                 }
             });
+        }
+
+        fetch(`/getStatus`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            });
+
+        function takeData(data) {
+            let output = "";
+            let x = 1;
+            data.forEach(book => {
+                if (book.request_status == "pending") {
+                    output += `<tr class="colum">`;
+                    output += `<td>${x}</td>`;
+                    output += `<td>${book.title}</td>`;
+                    output += `<td>${book.borrower_name}</td>`;
+                    output += `<td>${book.borrow_date}</td>`;
+                    output += `<td>${book.return_date}</td>`;
+                    output += `<td>`;
+                    output += `<button type="button" class="btn approve" data-request-id="${book.request_id}">Approve</button>`;
+                    output += `<button type="button" class="btn disapprove" data-request-id="${book.request_id}">Disapprove</button>`;
+                    output += `</td>`;
+                    output += `</tr>`;
+                    x++;
+                }
+            });
+            document.querySelector("#container").innerHTML = output;
+        }
+
+        fetch(`/getAcc`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData2(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            });
+
+        function takeData2(data) {
+            const userData = data[0];
+            document.querySelector("#username").innerText = userData.username;
+            document.querySelector("#name").innerText = userData.name;
+            document.querySelector("#email").innerText = userData.email;
+        }
+
+        document.addEventListener("click", function (event) {
+            if (event.target.classList.contains("approve")) {
+                const requestId = event.target.dataset.requestId;
+                updateRequestStatus(requestId, "approved");
+            } else if (event.target.classList.contains("disapprove")) {
+                const requestId = event.target.dataset.requestId;
+                updateRequestStatus(requestId, "disapprove");
+            }
+        });
+
+        // Function to update request status via AJAX
+        function updateRequestStatus(requestId, status) {
+            fetch(`/cancelRequest?requestId=${requestId}&action=${status}`, {
+                method: "PUT"
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.text();
+                })
+                .then(function (data) {
+                    // Handle success response
+                    Swal.fire({
+                        title: "Success!",
+                        text: data,
+                        icon: "success"
+                    }).then((result) => {
+                        // Reload the page after successful update
+                        location.reload();
+                    });
+                })
+                .catch(function (error) {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An error occurred while updating status.",
+                        icon: "error"
+                    });
+                });
         }
     </script>
 </body>

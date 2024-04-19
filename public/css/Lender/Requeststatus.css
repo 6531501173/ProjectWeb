@@ -18,11 +18,11 @@ h3{
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-#approve{
+.approve{
     background: rgba(190, 255, 179, 1);
     border-radius: 50px;
 }
-#disapprove{
+.disapprove{
     background: rgba(255, 112, 112, 1);
     border-radius: 50px;
 }

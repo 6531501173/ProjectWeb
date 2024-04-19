@@ -43,38 +43,51 @@
     <!-- body -->
     <h1 class="text-center my-5">Edit Asset</h1>
     <div id="container-body" class="d-flex">
-        <div id="img">
-            <input type="file" id="inpfile">
+        <div id="img" class="row">
+            <!-- Move the image tag inside the div -->
+            <div class="row">
+                <label for="inpfile"><img src="" class="card-img-top image-small" alt="" id="pic"></label>
+            </div>
+            <div class="row">
+                <input type="file" id="inpfile" accept="image/*">
+            </div>
+            <!-- Add a label for the file input -->
         </div>
         <div id="content">
             <div class="inp">
                 <h4>Title:</h4>
-                <input type="text" class="form-control" value="Harry potter">
+                <input type="text" class="form-control" id="title" value="Harry potter">
             </div>
             <div class="inp">
                 <h4>Author:</h4>
-                <input type="text" class="form-control" value="JK">
+                <input type="text" class="form-control" id="author" value="JK">
             </div>
             <div class="inp">
                 <h4>Lender:</h4>
-                <input type="text" class="form-control" value="John Doe">
+                <input type="text" class="form-control" id="lender" value="John Doe">
             </div>
             <div class="inp">
                 <h4>Status:</h4>
                 <select name="status" id="item-status" class="form-control">
+                    <!-- Adjust options to match data.status -->
                     <option value="Available" class="text-success">Available</option>
-                    <option value="Available" class="text-danger">Disable</option>
-                    <option value="Available" class="text-warning">Pending</option>
-                    <option value="Available" class="text-danger">Borrowed</option>
+                    <option value="Disable" class="text-danger">Disabled</option>
+                    <option value="Pending" class="text-warning">Pending</option>
+                    <option value="Borrowed" class="text-danger">Borrowed</option>
                 </select>
             </div>
             <div class="m-4">
                 <button class="btn btn-warning button">Save</button>
-                <button class="btn btn-secondary button">Cancle</button>
+                <button class="btn btn-secondary button" id="cancelBtn">Cancel</button>
             </div>
         </div>
     </div>
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const url = window.location.href;
+        const parts = url.split('/');
+        const lastPart = parts[parts.length - 1];
+        const bookid = lastPart.split('=')[1];
         // Logout
         document.querySelector("#navbtn").onclick = function () {
             Swal.fire({
@@ -86,10 +99,45 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/logout";
                 }
             });
         }
+
+        fetch(`/findbook?bookid=${bookid}`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            });
+
+        function takeData(data) {
+            document.querySelector("#title").value = data.title;
+            document.querySelector("#author").value = data.author;
+            document.querySelector("#pic").src = `/public/img/bookimg/${data.image}`;
+            // Set the select element's value based on the status
+            document.querySelector("#item-status").value = data.status;
+        }
+
+        document.getElementById("cancelBtn").addEventListener("click", function () {
+            window.location.assign("/assetlist");
+        });
+
+        document.getElementById("inpfile").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function () {
+                const imgElement = document.getElementById("pic");
+                imgElement.src = reader.result; // Display selected image
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
     </script>
 </body>
 

@@ -3,8 +3,10 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const app = express();
 var mysql = require('mysql2');
+const fs = require("fs");
+const multer = require("multer");
 const session = require("express-session");
-
+const upload = multer({ dest: "uploads/" });
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -124,12 +126,6 @@ app.post("/register", function (req, res) {
   });
 });
 
-
-
-
-
-
-
 //  ------Assetlist-------
 app.get("/assetlist", function (req, res) {
   // Check if the user is logged in
@@ -173,19 +169,43 @@ app.get("/getbooklist", function (req, res) {
 });
 
 // ------EDIT ASSETLIST(ADMIN)------
-app.get("/assetlist/edit", function (req, res) {
+app.get("/assetlist/edit/bookid=:bookid", function (req, res) {
   if (!req.session.userID) {
     return res.status(200).redirect("/Home");
   }
   res.sendFile(path.join(__dirname, "/views/staff/Edit.html"));
 });
+function updateFileNameInDatabase(bookId, fileName) {
+  const sql = "UPDATE assetlist SET image = ? WHERE book_id = ?"
+  con.query(sql, [fileName, bookId], function (err, result) {
+    if (err) {
+      console.error(err);
+    }
+    res.status(200).send("UPDATED DATA");
+  });
+}
 
-
-
+// Define endpoint for file upload
+app.post("/upload", upload.single("file"), function (req, res) {
+  const file = req.file;
+  const tempPath = file.path;
+  const targetPath = path.join(__dirname, "/public/img/bookimg", file.originalname); // Path to save the file
+  fs.rename(tempPath, targetPath, function (err) {
+    if (err) {
+      console.error(err);
+      return res.status(500).send("Error uploading file");
+    }
+    const bookId = req.body.bookId; // Assuming you're sending the bookId along with the file upload request
+    updateFileNameInDatabase(bookId, file.originalname); // Update file name in the database
+    res.status(200).send("File uploaded successfully");
+  });
+});
 
 
 
 // ------Borrow request-----
+
+//  findbook use to get bookID from url params use to find book by using bookID
 app.get("/findbook", function (req, res) {
   const bookId = req.query.bookid; // Retrieve the bookid from the query parameters
   const sql = "SELECT * FROM assetlist WHERE book_id = ?";
@@ -222,11 +242,48 @@ app.get("/requestStatus", function (req, res) {
   if (!req.session.userID) {
     return res.status(200).redirect("/Home");
   }
-  res.sendFile(path.join(__dirname, "/views/borrower/Requeststatus.html"));
+  const userRole = req.session.role;
+  if (userRole == "lender") {
+    return res.sendFile(path.join(__dirname, "/views/lender/Requeststatus.html"));
+  }
+  if (userRole == "borrower") {
+    return res.sendFile(path.join(__dirname, "/views/borrower/Requeststatus.html"));
+  }
 });
+app.get("/getAcc", function (req, res) {
+  const userId = req.session.userID;
+  let sql = `SELECT username,name,email from user_info WHERE user_id=?`;
+  con.query(sql, [userId], function (err, result) {
+    if (err) {
+      console.error(err);
+      return
+    }
+    res.json(result);
+  });
+});
+
 app.get("/getStatus", function (req, res) {
   const userId = req.session.userID;
-  const sql = "SELECT r.*, a.image FROM request r JOIN assetlist a ON r.book_id = a.book_id WHERE r.borrower_id = ?";
+  const userRole = req.session.role;
+  let sql;
+  if (userRole === 'borrower') {
+    sql = `
+          SELECT r.*, a.image, u.name AS lender_name 
+          FROM request r 
+          JOIN assetlist a ON r.book_id = a.book_id 
+          JOIN user_info u ON a.lender_id = u.user_id 
+          WHERE r.borrower_id = ?`;
+  } else if (userRole === 'lender') {
+    sql = `
+          SELECT r.*, a.image, u.name AS borrower_name 
+          FROM request r 
+          JOIN assetlist a ON r.book_id = a.book_id 
+          JOIN user_info u ON r.borrower_id = u.user_id 
+          WHERE a.lender_id = ?`;
+  } else {
+    return res.status(403).send("Forbidden");
+  }
+
   con.query(sql, [userId], function (err, results) {
     if (err) {
       console.error(err);
@@ -236,20 +293,85 @@ app.get("/getStatus", function (req, res) {
   });
 });
 
+
 app.put("/cancelRequest", function (req, res) {
   const requestId = req.query.requestId;
-  const sql = "UPDATE request SET request_status = 'cancelled' WHERE request_id = ?";
-  con.query(sql, [requestId], function (err, result) {
+  const action = req.query.action; // Action can be 'cancel', 'approve', or 'disapprove'
+
+  let sqlUpdateRequest, sqlUpdateAsset;
+
+  switch (action) {
+    case 'cancel':
+      sqlUpdateRequest = "UPDATE request SET request_status = 'cancelled' WHERE request_id = ?";
+      sqlUpdateAsset = "UPDATE assetlist SET status = 'available' WHERE book_id = (SELECT book_id FROM request WHERE request_id = ?)";
+      break;
+    case 'approved':
+      sqlUpdateRequest = "UPDATE request SET request_status = 'approved' WHERE request_id = ?";
+      sqlUpdateAsset = "UPDATE assetlist SET status = 'borrowed' WHERE book_id = (SELECT book_id FROM request WHERE request_id = ?)";
+      break;
+    case 'disapprove':
+      sqlUpdateRequest = "UPDATE request SET request_status = 'rejected' WHERE request_id = ?";
+      sqlUpdateAsset = "UPDATE assetlist SET status = 'available' WHERE book_id = (SELECT book_id FROM request WHERE request_id = ?)";
+      break;
+    default:
+      return res.status(400).send("Invalid action");
+  }
+
+  con.beginTransaction(function (err) {
     if (err) {
       console.error(err);
       return res.status(500).send("Database server error");
     }
-    if (result.affectedRows === 0) {
-      return res.status(404).send("Request not found");
-    }
-    return res.status(200).send("Request cancelled successfully");
+
+    // Update request status
+    con.query(sqlUpdateRequest, [requestId], function (err, result) {
+      if (err) {
+        con.rollback(function () {
+          console.error(err);
+          return res.status(500).send("Database server error");
+        });
+      }
+      if (result.affectedRows === 0) {
+        con.rollback(function () {
+          return res.status(404).send("Request not found");
+        });
+      }
+
+      // If action is cancel, approve, or disapprove, update asset status if required
+      if (sqlUpdateAsset) {
+        con.query(sqlUpdateAsset, [requestId], function (err, result) {
+          if (err) {
+            con.rollback(function () {
+              console.error(err);
+              return res.status(500).send("Database server error");
+            });
+          }
+
+          con.commit(function (err) {
+            if (err) {
+              con.rollback(function () {
+                console.error(err);
+                return res.status(500).send("Database server error");
+              });
+            }
+            return res.status(200).send(action === 'cancel' ? "Request cancelled successfully" : "Request approved successfully");
+          });
+        });
+      } else { // If action is disapprove, directly commit the transaction
+        con.commit(function (err) {
+          if (err) {
+            con.rollback(function () {
+              console.error(err);
+              return res.status(500).send("Database server error");
+            });
+          }
+          return res.status(200).send("Request disapproved successfully");
+        });
+      }
+    });
   });
 });
+
 
 
 app.post("/requestStatus", function (req, res) {

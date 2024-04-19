@@ -42,8 +42,9 @@
 
     <!-- body -->
     <div id="table">
-        <h3 class="text-white mx-5 py-2">Assetlist 
-            <button class="btn text-white float-end " id="createAsset" onclick="location.href='/views/staff/Create.html'">Create +</button>
+        <h3 class="text-white mx-5 py-2">Assetlist
+            <button class="btn text-white float-end " id="createAsset"
+                onclick="location.href='/views/staff/Create.html'">Create +</button>
         </h3>
         <table class="table table-striped">
             <tr class="colum">
@@ -56,7 +57,7 @@
                 <th>Actions</th>
             </tr>
             <tbody id="TB">
-                
+
             </tbody>
         </table>
     </div>
@@ -88,21 +89,20 @@
             .catch(function (error) {
                 console.log("error:" + error);
             });
-        
+
         let output = "";
-        
-        function takeData(data){
+
+        function takeData(data) {
             data.forEach(book => {
-                output+=`<tr>`;
-                output+=`<td>${book.book_id}</td>`;
-                output+=`<td><img src="/public/img/bookimg/${book.image}" class="card-img-top image-small" alt="${book.title}"></td>`;
-                output+=`<td>${book.title}</td>`;
-                output+=`<td>${book.author}</td>`;
-                output+=`<td>${book.lender_name}</td>`;
-                output+=`<td class="${getStatusColor(book.status)}">${book.status}</td>`;
-                output+=`<td><button id="edit" type="button" class="btn" onclick="location.href='#'">Edit</button></td>`;
-                output+=`</tr>`;
-                
+                output += `<tr>`;
+                output += `<td>${book.book_id}</td>`;
+                output += `<td><img src="/public/img/bookimg/${book.image}" class="card-img-top image-small" alt="${book.title}"></td>`;
+                output += `<td>${book.title}</td>`;
+                output += `<td>${book.author}</td>`;
+                output += `<td>${book.lender_name}</td>`;
+                output += `<td class="${getStatusColor(book.status)}">${book.status}</td>`;
+                output += `<td><button id="edit" type="button" class="btn" onclick="editBook(${book.book_id})">Edit</button></td>`;
+                output += `</tr>`;
             });
             document.querySelector("#TB").innerHTML = output;
         }
@@ -122,6 +122,9 @@
             }
         }
 
+        function editBook(bookId) {
+            window.location.href = `/assetlist/edit/bookid=${bookId}`;
+        }
     </script>
 </body>
 

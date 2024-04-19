@@ -56,7 +56,7 @@
                 }
             });
         }
-    
+
         function cancelRequest(requestId) {
             // Show confirmation dialog
             Swal.fire({
@@ -69,7 +69,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch(`/cancelRequest?requestId=${requestId}`, {
+                        const response = await fetch(`/cancelRequest?requestId=${requestId}&action=cancel`, {
                             method: 'PUT'
                         });
                         if (response.ok) {
@@ -88,7 +88,6 @@
                 }
             });
         }
-    
         fetch(`/getStatus`)
             .then(function (response) {
                 return response.json();
@@ -99,7 +98,7 @@
             .catch(function (error) {
                 console.log("error:" + error);
             });
-    
+
         function takeData(data) {
             let output = "";
             data.forEach(a => {
@@ -109,13 +108,12 @@
                     output += `<img src="/public/img/bookimg/${a.image}" class="card-img-top" alt="${a.title}">`;
                     output += `<div class="card-title">`;
                     output += `<h5>${a.title}</h5>`;
-                    output += `<br>`;
                     output += `<h5>date</h5>`;
                     output += `<p>${a.borrow_date}</p>`;
-                    output += `<br>`;
                     output += `<h5>Return date</h5>`;
                     output += `<p>${a.return_date}</p>`;
-                    output += `<br>`;
+                    output += `<h5>Request Status</h5>`;
+                    output += `<p class="text-warning">${a.request_status}</p>`;
                     output += `</div>`;
                     output += `<button class="btn cancel-btn" onclick="cancelRequest(${a.request_id})">Cancel request</button>`;
                     output += `</div>`;

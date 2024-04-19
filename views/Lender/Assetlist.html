@@ -25,10 +25,10 @@
                     <a class="nav-link text-black disabled" href="#">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/borrower/Requeststatus.html">Request Status</a>
+                    <a class="nav-link text-black" href="/requestStatus">Request Status</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/borrower/History.html">History</a>
+                    <a class="nav-link text-black" href="/views/Lender/History.html">History</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -36,7 +36,7 @@
             </ul>
         </div>
     </nav>
-    
+
     <!-- body -->
     <div id="container" class="d-flex flex-wrap">
     </div>
@@ -68,64 +68,89 @@
             .catch(function (error) {
                 console.log("error:" + error);
             })
+
         // Function to append data to HTML
         function appendData(data) {
-    let output = "";
-    data.forEach(book => {
-        console.log(book);
-        output += `<div class="card my-3 mx-3 shadow item" style="width: 15rem; cursor: pointer" id="${book.book_id}">`;
-        output += `<div class="card-body">`;
-        output += `<img src="/public/img/bookimg/${book.image}" alt="${book.title}" class="card-img-top">`;
-        output += `<h5 class="card-title text-white">${book.title}</h5>`;
-        output += `</div>`;
-        output += `</div>`;
-    });
+            let output = "";
+            data.forEach(book => {
+                output += `<div class="card my-3 mx-3 shadow item" style="width: 15rem; cursor: pointer" id="${book.book_id}">`;
+                output += `<div class="card-body">`;
+                output += `<img src="/public/img/bookimg/${book.image}" alt="${book.title}" class="card-img-top">`;
+                output += `<h5 class="card-title text-white">${book.title}</h5>`;
+                output += `</div>`;
+                output += `</div>`;
+            });
 
-    document.querySelector("#container").innerHTML = output;
-    const item = document.querySelectorAll(".item");
-    item.forEach(t => {
-        t.onclick = function () {
-            data.forEach(findBook => {
-                if (t.id == findBook.book_id) {
-                    let borrowButtonText = "Borrow";
-                    let borrowButtonColor = "#919191";
-                    if (findBook.status == "available") {
-                        borrowButtonText = `<a class="text-white" href="/views/borrower/Requestborrow.html" id="borrowbtn">Borrow</a>`;
-                    }
-                    Swal.fire({
-                        title: `<strong>${findBook.title}</strong>`,
-                        html: statusCheck(findBook),
-                        imageUrl: `data:image/jpeg;base64,${findBook.image}`,
-                        imageWidth: 300,
-                        imageHeight: 400,
-                        imageAlt: findBook.title,
-                        confirmButtonText: borrowButtonText,
-                        confirmButtonColor: borrowButtonColor
+            document.querySelector("#container").innerHTML = output;
+            const item = document.querySelectorAll(".item");
+            item.forEach(t => {
+                t.onclick = function () {
+                    data.forEach(findBook => {
+                        if (t.id == findBook.book_id) {
+                            let borrowButtonText = "Borrow";
+                            if (findBook.status == "available") {
+                                borrowButtonText = `Borrow`;
+                            }
+                            Swal.fire({
+                                title: `<strong>${findBook.title}</strong>`,
+                                html: statusCheck(findBook),
+                                imageUrl: `/public/img/bookimg/${findBook.image}`,
+                                imageWidth: 300,
+                                imageHeight: 400,
+                                imageAlt: findBook.title,
+                                showCancelButton: true,
+                                confirmButtonText: borrowButtonText,
+                                cancelButtonText: 'Cancel',
+                            }).then(async function (result) {
+                                if (result.isConfirmed) {
+                                    try {
+                                        const response = await fetch('/requestborrow', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                bookId: t.id
+                                            })
+                                        });
+                                        const data = await response.json();
+                                        if (response.ok) {
+                                            window.location.href = data.redirectTo;
+                                        } else {
+                                            // Display error message
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error',
+                                                text: data.error || 'Something went wrong.'
+                                            });
+                                        }
+                                    } catch (error) {
+                                        console.error('Error:', error);
+                                        // Handle other errors
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: 'An error occurred while processing your request.'
+                                        });
+                                    }
+                                }
+                            });
+
+                        }
                     });
                 }
             });
         }
-    });
-}
 
         // Function to check status
         function statusCheck(object) {
             if (object.status == "available") {
                 return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-success"><strong>${object.status}</strong></span>`
             }
-            if (object.status == "pending") {
-                return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-warning"><strong>${object.status}</strong></span>`
-            }
-            if (object.status == "disable") {
-                return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-danger"><strong>${object.status}</strong></span>`
-            }
-            if (object.status == "borrowed") {
-                return `Author: <strong>${object.author}</strong><br>Borrow Status: <span class="text-danger"><strong>${object.status}</strong></span>`
-            }
+            // Add other status checks if needed
         }
-
-
     </script>
+
 </body>
 
 </html>
