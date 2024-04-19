@@ -69,7 +69,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch(`/cancelRequest?requestId=${requestId}&action=cancel`, {
+                        const response = await fetch(`/changeRequestStatus?requestId=${requestId}&action=cancel`, {
                             method: 'PUT'
                         });
                         if (response.ok) {

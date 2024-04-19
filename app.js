@@ -294,7 +294,7 @@ app.get("/getStatus", function (req, res) {
 });
 
 
-app.put("/cancelRequest", function (req, res) {
+app.put("/changeRequestStatus", function (req, res) {
   const requestId = req.query.requestId;
   const action = req.query.action; // Action can be 'cancel', 'approve', or 'disapprove'
 

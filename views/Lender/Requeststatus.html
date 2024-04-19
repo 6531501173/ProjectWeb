@@ -159,7 +159,7 @@
 
         // Function to update request status via AJAX
         function updateRequestStatus(requestId, status) {
-            fetch(`/cancelRequest?requestId=${requestId}&action=${status}`, {
+            fetch(`/changeRequestStatus?requestId=${requestId}&action=${status}`, {
                 method: "PUT"
             })
                 .then(function (response) {
