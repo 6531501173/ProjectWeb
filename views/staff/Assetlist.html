@@ -22,16 +22,16 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black disabled" href="/views/staff/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black disabled" href="/assetlist">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Dashboard.html">Dashboard</a>
+                    <a class="nav-link text-black" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/History.html">History</a>
+                    <a class="nav-link text-black" href="/history">History</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Returnasset.html">Return Asset</a>
+                    <a class="nav-link text-black" href="/returnAsset">Return Asset</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -44,7 +44,7 @@
     <div id="table">
         <h3 class="text-white mx-5 py-2">Assetlist
             <button class="btn text-white float-end " id="createAsset"
-                onclick="location.href='/views/staff/Create.html'">Create +</button>
+                onclick="location.href='/create'">Create +</button>
         </h3>
         <table class="table table-striped">
             <tr class="colum">
@@ -93,6 +93,7 @@
         let output = "";
 
         function takeData(data) {
+            console.log(data);
             data.forEach(book => {
                 output += `<tr>`;
                 output += `<td>${book.book_id}</td>`;

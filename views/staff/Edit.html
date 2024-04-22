@@ -63,10 +63,6 @@
                 <input type="text" class="form-control" id="author" value="JK">
             </div>
             <div class="inp">
-                <h4>Lender:</h4>
-                <input type="text" class="form-control" id="lender" value="John Doe">
-            </div>
-            <div class="inp">
                 <h4>Status:</h4>
                 <select name="status" id="item-status" class="form-control">
                     <!-- Adjust options to match data.status -->
@@ -77,7 +73,7 @@
                 </select>
             </div>
             <div class="m-4">
-                <button class="btn btn-warning button">Save</button>
+                <button class="btn btn-warning button" id="saveBtn">Save</button>
                 <button class="btn btn-secondary button" id="cancelBtn">Cancel</button>
             </div>
         </div>
@@ -136,6 +132,64 @@
             }
             if (file) {
                 reader.readAsDataURL(file);
+            }
+        });
+
+        // Save Button
+        document.getElementById("saveBtn").addEventListener("click", async function () {
+            const title = document.getElementById("title").value;
+            const author = document.getElementById("author").value;
+            const status = document.getElementById("item-status").value;
+            const fileInput = document.getElementById("inpfile");
+            const file = fileInput.files[0];
+            const bookId = bookid; // Replace this with the actual book ID
+            // Prepare data to send to the server
+            const data = {
+                title: title,
+                author: author,
+                status: status,
+                bookId: bookId
+            };
+            // Check if file is selected
+            if (file) {
+                data.file = file;
+            }
+            console.log(data);
+            try {
+                // Send a request to update the asset information
+                const response = await fetch("/upload", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) {
+                    // Display success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Asset updated successfully.'
+                    }).then(() => {
+                        // Redirect to the asset list page after successful update
+                        window.location.assign("/assetlist");
+                    });
+                } else {
+                    // Display error message if something went wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update asset. Please try again later.'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Display error message if an error occurred during the request
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.'
+                });
             }
         });
     </script>

@@ -22,16 +22,16 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black" href="/assetlist">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Dashboard.html">Dashboard</a>
+                    <a class="nav-link text-black" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black disabled" href="/views/staff/History.html">History</a>
+                    <a class="nav-link text-black disabled" href="/history">History</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Returnasset.html">Return Asset</a>
+                    <a class="nav-link text-black" href="/returnasset">Return Asset</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -55,52 +55,13 @@
                 <th>Status</th>
             </tr>
             <tbody id="TB">
-                <tr class="colum">
-                    <td>1</td>
-                    <td>Game of Throne</td>
-                    <td>Jane smith</td>
-                    <td>Johndoe007</td>
-                    <td>Jame johnson</td>
-                    <td>20/03/2567</td>
-                    <td>21/03/2567</td>
-                    <td class="text-success">returned</td>
-                </tr>
-                <tr class="colum">
-                    <td>2</td>
-                    <td>Harry Potter</td>
-                    <td>Smith Sam</td>
-                    <td>Billy Green</td>
-                    <td>Jame johnson</td>
-                    <td>22/03/2567</td>
-                    <td>23/03/2567</td>
-                    <td class="text-success">returned</td>
-                </tr>
-                <tr class="colum">
-                    <td>3</td>
-                    <td>Harry Potter2</td>
-                    <td>Smith Sam</td>
-                    <td>Billy Green</td>
-                    <td>Jame johnson</td>
-                    <td>24/03/2567</td>
-                    <td>25/03/2567</td>
-                    <td class="text-success">returned</td>
-                </tr>
-                <tr class="colum">
-                    <td>4</td>
-                    <td>NEW SCIENTIST: THE ORIGIN OF (ALMOST) EVERYTHING</td>
-                    <td>Joel Clam</td>
-                    <td>xamxan918</td>
-                    <td>Jame johnson</td>
-                    <td>22/03/2567</td>
-                    <td>23/03/2567</td>
-                    <td class="text-success">returned</td>
-                </tr>
+                
             </tbody>
         </table>
     </div>
     <script>
-       // Logout
-       document.querySelector("#navbtn").onclick = function () {
+        // Logout
+        document.querySelector("#navbtn").onclick = function () {
             Swal.fire({
                 title: "Are you sure for Logout?",
                 icon: "warning",
@@ -110,9 +71,42 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/logout";
                 }
             });
+        }
+
+        fetch('/getStatus')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            })
+
+        function takeData(data) {
+            let output = "";
+            let x = 1;
+            console.log(data);
+            data.forEach(book => {
+                if (book.request_status == "returned" || book.request_status == "approved" || book.request_status == "disapproved" || book.request_status == "cancelled") {
+                    output += `<tr class="colum">`;
+                    output += `<td>${x}</td>`;
+                    output += `<td>${book.title}</td>`;
+                    output += `<td>${book.borrower_name}</td>`;
+                    output += `<td>${book.lender_name}</td>`;
+                    output += `<td>${book.lender_name}</td>`;
+                    output += `<td>${book.borrow_date}</td>`;
+                    output += `<td>${book.return_date}</td>`;
+                    output += `<td>${book.request_status}</td>`;
+                    output += `</tr>`;
+                    x++;
+                }
+            });
+            document.querySelector("#TB").innerHTML = output;
         }
     </script>
 </body>

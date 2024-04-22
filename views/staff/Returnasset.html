@@ -22,16 +22,16 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black" href="/assetlist">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Dashboard.html">Dashboard</a>
+                    <a class="nav-link text-black" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/History.html">History</a>
+                    <a class="nav-link text-black" href="/history">History</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black disabled" href="/views/staff/Returnasset.html">Return Asset</a>
+                    <a class="nav-link text-black disabled" href="/returnasset">Return Asset</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -40,52 +40,8 @@
         </div>
     </nav>
     <!-- body -->
-    <div class="d-flex flex-wrap justify-content-center mt-3">
-        <div class="card">
-            <div class="card-body text-center">
-                <img src="/public/img/game of thrones.png" class="card-img-top" alt="game of thrones">
-                <div class="card-title">
-                    <h5>Game of Thrones</h5>
-                    <h5>date</h5>
-                    <p>20/03/2024</p>
-                    <h5>Return date</h5>
-                    <p>20/03/2024</p>
-                    <h5>Status</h5>
-                    
-                </div>
-                <a href="#" class="btn " id="Re">Return</a>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body text-center">
-                <img src="/public/img/Doraemon.png" class="card-img-top" alt="Doraemon">
-                <div class="card-title">
-                    <h5>Doraemon</h5>
-                    <h5>date</h5>
-                    <p>21/03/2024</p>
-                    <h5>Return date</h5>
-                    <p>27/03/2024</p>
-                    
-                    
-                </div>
-                <a href="#" class="btn " id="Re">Return</a>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body text-center">
-                <img src="/public/img/HarryPotter.png" class="card-img-top" alt="Doraemon">
-                <div class="card-title">
-                    <h5>Harry Potter 1</h5>
-                    <h5>date</h5>
-                    <p>22/03/2024</p>
-                    <h5>Return date</h5>
-                    <p>27/03/2024</p>
-                    
-                    
-                </div>
-                <a href="#" class="btn " id="Re">Return</a>
-            </div>
-        </div>
+    <div class="flex-wrap d-flex justify-content-center mt-3" id="container">
+
     </div>
     <script>
         // Logout
@@ -99,12 +55,76 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/logout";
                 }
             });
         }
-    </script>
 
+        function cancelRequest(requestId) {
+            // Show confirmation dialog
+            Swal.fire({
+                title: "Are you sure you want to return this request?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#FF7070",
+                cancelButtonColor: "#D6D6D6",
+                confirmButtonText: "Yes, cancel it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/changeRequestStatus?requestId=${requestId}&action=return`, {
+                            method: 'PUT'
+                        });
+                        if (response.ok) {
+                            // Remove the card from the DOM
+                            document.getElementById(requestId).remove();
+                            Swal.fire("Success", "Request return successfully", "success");
+                        } else {
+                            // Display error message
+                            Swal.fire("Error", "Failed to return request", "error");
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Handle other errors
+                        Swal.fire("Error", "An error occurred while processing your request", "error");
+                    }
+                }
+            });
+        }
+        fetch(`/getStatus`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            });
+
+        function takeData(data) {
+            let output = "";
+            data.forEach(a => {
+                if (a.request_status == "approved") {
+                    output += `<div id="${a.request_id}" class="card item">`;
+                    output += `<div class="card-body text-center">`;
+                    output += `<img src="/public/img/bookimg/${a.image}" class="card-img-top" alt="${a.title}">`;
+                    output += `<div class="card-title">`;
+                    output += `<h5>${a.title}</h5>`;
+                    output += `<h5>date</h5>`;
+                    output += `<p>${a.borrow_date}</p>`;
+                    output += `<h5>Return date</h5>`;
+                    output += `<p>${a.return_date}</p>`;
+                    output += `<h5>Request Status</h5>`;
+                    output += `</div>`;
+                    output += `<button class="btn return-btn" onclick="cancelRequest(${a.request_id})">Return Asset</button>`;
+                    output += `</div>`;
+                    output += `</div>`;
+                }
+            });
+            document.querySelector("#container").innerHTML = output;
+        }
+    </script>
 </body>
 
 </html>

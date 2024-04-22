@@ -22,16 +22,16 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black" href="/assetlist">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Dashboard.html">Dashboard</a>
+                    <a class="nav-link text-black" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/History.html">History</a>
+                    <a class="nav-link text-black" href="/history">History</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/staff/Returnasset.html">Return Asset</a>
+                    <a class="nav-link text-black" href="/returnasset">Return Asset</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -41,7 +41,7 @@
     </nav>
 
     <!-- body -->
-    <h1 class="text-center mt-3">CreateAsset</h1>
+    <h1 class="text-center mt-3">Create Asset</h1>
     <div id="container-body" class="d-flex justify-content-center">
         <div class=" py-4 text-white">
             <div class="mb-3">
@@ -49,19 +49,19 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Title</label>
-                <input type="text" class="form-control">
+                <input type="text" class="form-control" id="title"> <!-- Add id="title" -->
             </div>
             <div class="mb-3">
                 <label class="form-label">Author</label>
-                <input type="text" class="form-control">
+                <input type="text" class="form-control" id="author">
             </div>
             <div class="mb-3">
                 <label class="form-label">Status</label>
                 <select name="status" id="item-status" class="form-control">
                     <option value="Available" class="text-success">Available</option>
-                    <option value="Available" class="text-danger">Disable</option>
-                    <option value="Available" class="text-warning">Pending</option>
-                    <option value="Available" class="text-danger">Borrowed</option>
+                    <option value="Disable" class="text-danger">Disable</option>
+                    <option value="Pending" class="text-warning">Pending</option>
+                    <option value="Borrowed" class="text-danger">Borrowed</option>
                 </select>
             </div>
             <div class="py-2 justify-content-center">
@@ -70,25 +70,56 @@
             </div>
             </form>
         </div>
-
     </div>
 
     <script>
-        // Logout
-        document.querySelector("#navbtn").onclick = function () {
-            Swal.fire({
-                title: "Are you sure for Logout?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#FF7070",
-                cancelButtonColor: "#D6D6D6",
-                confirmButtonText: "Logout!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+        document.querySelector("#save").addEventListener("click", async function () {
+            const title = document.getElementById("title").value;
+            const author = document.getElementById("author").value;
+            const status = document.getElementById("item-status").value;
+            const fileInput = document.getElementById("inpfile");
+            const file = fileInput.files[0];
+
+            // Prepare form data to send to the server
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("author", author);
+            formData.append("status", status);
+            formData.append("file", file);
+
+            try {
+                // Send a request to the server to add new asset
+                const response = await fetch("/add_asset", {
+                    method: "POST",
+                    body: formData
+                });
+                if (response.ok) {
+                    // Display success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Asset added successfully.'
+                    }).then(() => {
+                        window.location.assign("/assetlist");
+                    });
+                } else {
+                    // Display error message if something went wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to add asset. Please try again later.'
+                    });
                 }
-            });
-        }
+            } catch (error) {
+                console.error('Error:', error);
+                // Display error message if an error occurred during the request
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.'
+                });
+            }
+        });
     </script>
 
 

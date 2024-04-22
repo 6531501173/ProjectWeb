@@ -22,13 +22,13 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/borrower/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black" href="/assetlist">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/borrower/Requeststatus.html">Request Status</a>
+                    <a class="nav-link text-black" href="/requestStatus">Request Status</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black disabled" href="/views/borrower/History.html">History</a>
+                    <a class="nav-link text-black disabled" href="/history">History</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -37,17 +37,20 @@
         </div>
     </nav>
     <!-- body -->
-    <div id="userinfo">
+    <div id="userinfo" class="mt-3">
         <h3 class="text-white mx-5 py-2">User info</h3>
         <table class="table table-striped">
-            <tr class="colum">
-                <td>Username: </td>
+            <tr>
+                <td>Username:</td>
+                <td id="username"></td>
             </tr>
-            <tr class="colum">
-                <td>Name: </td>
+            <tr>
+                <td>Name:</td>
+                <td id="name"></td>
             </tr>
-            <tr class="colum">
-                <td>Email: </td>
+            <tr>
+                <td>Email:</td>
+                <td id="email"></td>
             </tr>
         </table>
     </div>
@@ -60,26 +63,18 @@
                 <th>Title</th>
                 <th>Approver</th>
                 <th>Date/Return Date</th>
-                <th>Lender</th>
                 <th>Status</th>
             </tr>
             <!-- Example history!! -->
-            <tbody>
-                <tr class="colum">
-                    <td>1</td>
-                    <td>Game of Throne</td>
-                    <td>Jane smith</td>
-                    <td>20/03/2567-21/03/2567</td>
-                    <td>Joel Bronze</td>
-                    <td class="text-success">returned</td>
-                </tr>
+            <tbody id="container">
+
             </tbody>
 
         </table>
     </div>
     <script>
-       // Logout
-       document.querySelector("#navbtn").onclick = function () {
+        // Logout
+        document.querySelector("#navbtn").onclick = function () {
             Swal.fire({
                 title: "Are you sure for Logout?",
                 icon: "warning",
@@ -89,9 +84,65 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/logout";
                 }
             });
+        }
+        fetch(`/getAcc`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData2(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            });
+
+        function takeData2(data) {
+            const userData = data[0];
+            document.querySelector("#username").innerText = userData.username;
+            document.querySelector("#name").innerText = userData.name;
+            document.querySelector("#email").innerText = userData.email;
+        }
+
+        fetch('/getStatus')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            })
+
+        function takeData(data) {
+            let output = "";
+            let x = 1;
+            console.log(data);
+            data.forEach(book => {
+                if (book.request_status == "cancelled") {
+                    output += `<tr class="colum">`;
+                    output += `<td>${x}</td>`;
+                    output += `<td>${book.title}</td>`;
+                    output += `<td>-</td>`;
+                    output += `<td>${book.borrow_date} - ${book.return_date}</td>`;
+                    output += `<td>${book.request_status}</td>`;
+                    output += `</tr>`;
+                    x++;
+                } else if(book.request_status !== "pending"){
+                    output += `<tr class="colum">`;
+                    output += `<td>${x}</td>`;
+                    output += `<td>${book.title}</td>`;
+                    output += `<td>${book.lender_name}</td>`;
+                    output += `<td>${book.borrow_date} - ${book.return_date}</td>`;
+                    output += `<td>${book.request_status}</td>`;
+                    output += `</tr>`;
+                    x++;
+                }
+            });
+            document.querySelector("#container").innerHTML = output;
         }
     </script>
 

@@ -72,23 +72,24 @@
         const parts = url.split('/');
         const lastPart = parts[parts.length - 1];
         const bookid = lastPart.split('=')[1];
-        // Set borrow date as today and tomorrow
-        const today = new Date();
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
+
         const borrowDateInput = document.getElementById("borrowDate");
         const returnDateInput = document.getElementById("returnDate");
-        const formattedToday = formatDate(today);
-        const formattedTomorrow = formatDate(tomorrow);
-        borrowDateInput.value = `${formattedToday}`;
-        returnDateInput.value = `${formattedTomorrow}`;
-
-        function formatDate(date) {
-            const day = date.getDate();
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
+        fetch('/getDate')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                getDate(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            })
+        function getDate(data) {
+            borrowDateInput.value = data.today;
+            returnDateInput.value = data.tomorrow;
         }
+
 
         // Fetch data from backend
         fetch(`/findbook?bookid=${bookid}`)

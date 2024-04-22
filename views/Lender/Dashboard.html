@@ -22,16 +22,16 @@
             </ul>
             <ul class="nav  justify-content-end">
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/Lender/Assetlist.html">Asset List</a>
+                    <a class="nav-link text-black" href="/assetlist">Asset List</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black disabled" href="/views/Lender/Dashboard.html">Dashboard</a>
+                    <a class="nav-link text-black disabled" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/Lender/History.html">History</a>
+                    <a class="nav-link text-black" href="/history">History</a>
                 </li>
                 <li class="nav-item mx-1">
-                    <a class="nav-link text-black" href="/views/Lender/Requeststatus.html">Request Status</a>
+                    <a class="nav-link text-black" href="/requestStatus">Request Status</a>
                 </li>
                 <li class="nav-item mx-1">
                     <button class="btn text-white mx-2" id="navbtn">Logout</button>
@@ -45,33 +45,65 @@
         <div class="d-flex flex-wrap text-center justify-content-center">
             <div class="card mx-4" id="dashboard">
                 <div class="card-body text-white inner" id="innerbg1">
-                    <h1>4</h1>
+                    <h1 id="available"></h1>
                     <h1>Available</h1>
                 </div>
             </div>
             <div class="card mx-4" id="dashboard">
                 <div class="card-body text-white inner" id="innerbg2">
-                    <h1>2</h1>
-                    <h1>Disable</h1>
+                    <h1 id="disabled"></h1>
+                    <h1>Disabled</h1>
                 </div>
             </div>
             <div class="card mx-4" id="dashboard">
                 <div class="card-body text-white inner" id="innerbg3">
-                    <h1>2</h1>
+                    <h1 id="borrowed"></h1>
                     <h1>Borrowed</h1>
                 </div>
             </div>
             <div class="card mx-4" id="dashboard">
                 <div class="card-body text-white inner" id="innerbg4">
-                    <h1>2</h1>
+                    <h1 id="pending"></h1>
                     <h1>Pending</h1>
                 </div>
             </div>
         </div>
     </div>
     <script>
-       // Logout
-       document.querySelector("#navbtn").onclick = function () {
+        fetch(`/getbooklist`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                takeData(data);
+            })
+            .catch(function (error) {
+                console.log("error:" + error);
+            });
+        function takeData(data) {
+            let available=0, disabled=0, borrowed=0, pending=0;
+            data.forEach(book => {
+                if(book.status == "available" ){
+                    available+=1;
+                }
+                if(book.status == "disabled" ){
+                    disabled+=1;
+                }
+                if(book.status == "borrowed" ){
+                    borrowed+=1;
+                }
+                if(book.status == "pending" ){
+                    pending+=1;
+                }
+            });
+            console.log(available, disabled, borrowed, pending);
+            document.querySelector("#available").innerHTML = available;
+            document.querySelector("#disabled").innerHTML = disabled;
+            document.querySelector("#borrowed").innerHTML = borrowed;
+            document.querySelector("#pending").innerHTML = pending;
+        }
+        // Logout
+        document.querySelector("#navbtn").onclick = function () {
             Swal.fire({
                 title: "Are you sure for Logout?",
                 icon: "warning",
@@ -81,7 +113,7 @@
                 confirmButtonText: "Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.assign("/views/index/Home.html")
+                    window.location.href = "/Home";
                 }
             });
         }

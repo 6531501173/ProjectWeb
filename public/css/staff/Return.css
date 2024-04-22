@@ -21,3 +21,10 @@
     color: white;
 }
 
+.return-btn {
+    background-color: #8da7fd; /* Your desired background color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    padding: 8px 16px; /* Adjust padding as needed */
+    border-radius: 20px; /* Add border-radius for rounded corners */
+}
