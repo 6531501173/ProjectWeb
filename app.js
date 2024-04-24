@@ -153,8 +153,19 @@ app.get("/assetlist", function (req, res) {
 
 app.get("/getbooklist", function (req, res) {
   const userRole = req.session.role;
-  if (userRole == 'admin' || userRole == 'lender') {
+  const userId = req.session.userID;
+  if (userRole == 'admin') {
     sql = "SELECT assetlist.*, user_info.name AS lender_name FROM assetlist INNER JOIN user_info ON assetlist.lender_id = user_info.user_id";
+  } else if (userRole == 'lender') {
+    sql = "SELECT assetlist.*, user_info.name AS lender_name FROM assetlist INNER JOIN user_info ON assetlist.lender_id = user_info.user_id WHERE assetlist.lender_id = ?";
+    con.query(sql, [userId], function (err, results) {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Database server error");
+      }
+      res.json(results);
+    });
+    return; // Return to avoid executing the query for other roles
   } else {
     sql = "SELECT * FROM assetlist WHERE status = 'available'";
   }
@@ -166,6 +177,7 @@ app.get("/getbooklist", function (req, res) {
     res.json(results);
   });
 });
+
 
 // ------EDIT ASSETLIST(ADMIN)------
 app.get("/assetlist/edit/bookid=:bookid", function (req, res) {
