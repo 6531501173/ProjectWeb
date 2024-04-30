@@ -73,6 +73,20 @@
     </div>
 
     <script>
+        document.querySelector("#navbtn").onclick = function () {
+            Swal.fire({
+                title: "Are you sure for Logout?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#FF7070",
+                cancelButtonColor: "#D6D6D6",
+                confirmButtonText: "Logout!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/logout";
+                }
+            });
+        }
         document.querySelector("#save").addEventListener("click", async function () {
             const title = document.getElementById("title").value;
             const author = document.getElementById("author").value;

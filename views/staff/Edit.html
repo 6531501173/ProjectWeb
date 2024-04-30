@@ -67,7 +67,7 @@
                 <select name="status" id="item-status" class="form-control">
                     <!-- Adjust options to match data.status -->
                     <option value="Available" class="text-success">Available</option>
-                    <option value="Disable" class="text-danger">Disabled</option>
+                    <option value="Disabled" class="text-danger">Disabled</option>
                     <option value="Pending" class="text-warning">Pending</option>
                     <option value="Borrowed" class="text-danger">Borrowed</option>
                 </select>
@@ -99,7 +99,6 @@
                 }
             });
         }
-
         fetch(`/findbook?bookid=${bookid}`)
             .then(function (response) {
                 return response.json();
